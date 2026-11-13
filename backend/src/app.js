@@ -14,7 +14,7 @@ import { swaggerDocument } from './config/swagger.js';
 
 const app = express();
 
-// Security HTTP headers
+const add =""
 app.use(
   helmet({
     contentSecurityPolicy: false, // Allows Swagger UI to load its CDN assets in dev
