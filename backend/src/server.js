@@ -24,7 +24,6 @@ async function startServer() {
       logger.info(`📚 Swagger Documentation available at: http://localhost:${env.port}/api/docs`);
       logger.info(`🩺 Health check available at: http://localhost:${env.port}/health`);
     });
-const add=""
     // 4. Graceful termination handling
     const shutdown = async (signal) => {
       logger.info(`Received ${signal}. Gracefully stopping server and background workers...`);
