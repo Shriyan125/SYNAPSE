@@ -76,6 +76,7 @@ flowchart TD
 | **Backend** | Node.js, Express | ES modules, strict 4-layer architecture, centralized error handler |
 | **Database** | PostgreSQL 16 (`pg`) | **NO ORM** — 100% hand-crafted SQL with joins, CTEs, aggregations |
 | **Authentication** | JWT + Refresh Tokens | 15m access token, 7d rotated refresh token in `httpOnly` cookie |
+| **Media Storage** | Cloudinary + Multer | Profile avatar upload & optimization via Cloudinary CDN |
 | **Security** | Helmet, CORS, Rate Limit | Parameterized SQL queries, strict auth rate limiting |
 | **Background Jobs**| `node-cron` | Automated 24h & 1h email reminder dispatch |
 | **Email** | Nodemailer | Ethereal in dev, transactional confirmation & schedule emails |
@@ -328,3 +329,4 @@ curl -X POST http://localhost:5001/api/v1/appointments \
 - **[Database Data Dictionary](./docs/data-dictionary.md)**
 - **[11 Hand-Crafted SQL Queries & Features Map](./docs/queries.md)**
 - **Interactive Swagger OpenAPI**: `http://localhost:5001/api/docs`
+# synapse_clone

@@ -1,5 +1,6 @@
 # Node dependencies
 node_modules/
+*/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -8,13 +9,20 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
-backend/.env
-frontend/.env
+*/.env
+*/.env.local
+*/.env.*.local
+!.env.example
+!*/.env.example
+!.env.production
+!*/.env.production
 
 # Build outputs
 dist/
 build/
+*/dist/
 .vercel/
+*/.vercel/
 
 # Logs
 logs/
@@ -34,4 +42,3 @@ coverage/
 # Agent tools & configs
 .agents/
 skills-lock.json
-
