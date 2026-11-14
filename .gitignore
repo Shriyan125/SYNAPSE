@@ -1,0 +1,29 @@
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production Builds
+dist/
+build/
+*/dist/
+
+# Environment and Secrets (keep .env.example)
+.env
+.env.local
+.env.*.local
+*/.env
+*/.env.local
+*/.env.*.local
+!.env.example
+!*/.env.example
+!.env.production
+!*/.env.production
+
+# Vercel and tooling
+.vercel/
+*/.vercel/
+skills-lock.json
