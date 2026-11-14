@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Mail, Phone, Stethoscope, Save, ShieldCheck } from 'lucide-react';
+import { User, Mail, Phone, Stethoscope, Save, ShieldCheck, Camera, Upload } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { authApi } from '../api/auth.api.js';
@@ -24,12 +24,15 @@ export function ProfilePage() {
   const { user, updateUser } = useAuth();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const isProvider = user?.role === 'provider';
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(profileSchema),
@@ -43,6 +46,28 @@ export function ProfilePage() {
       experience_years: user?.provider?.experience_years ?? 0,
     },
   });
+
+  const handleAvatarFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    try {
+      setIsUploading(true);
+      const res = await authApi.uploadAvatar(formData);
+      const uploadedUrl = res.data?.avatarUrl;
+      setValue('avatar_url', uploadedUrl);
+      updateUser(res.data?.user || { ...user, avatarUrl: uploadedUrl });
+      toast.success('Avatar uploaded to Cloudinary successfully!');
+    } catch (err) {
+      toast.error(err.message || 'Failed to upload avatar to Cloudinary.');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -71,8 +96,38 @@ export function ProfilePage() {
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
         {/* User Identity Snapshot */}
         <div className="flex items-center gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
-          <div className="w-14 h-14 rounded-2xl bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 font-bold flex items-center justify-center text-xl border border-primary-200 dark:border-primary-800">
-            {user?.fullName?.charAt(0) || user?.full_name?.charAt(0) || 'U'}
+          <div className="relative group">
+            {user?.avatarUrl || user?.avatar_url ? (
+              <img
+                src={user?.avatarUrl || user?.avatar_url}
+                alt="Avatar"
+                className="w-16 h-16 rounded-2xl object-cover border border-primary-200 dark:border-primary-800 shadow-sm"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-2xl bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 font-bold flex items-center justify-center text-2xl border border-primary-200 dark:border-primary-800">
+                {user?.fullName?.charAt(0) || user?.full_name?.charAt(0) || 'U'}
+              </div>
+            )}
+            <button
+              type="button"
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 p-1.5 rounded-xl bg-primary-600 text-white shadow-md hover:bg-primary-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+              title="Upload photo to Cloudinary"
+            >
+              {isUploading ? (
+                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Camera className="w-3.5 h-3.5" />
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarFileChange}
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -86,6 +141,10 @@ export function ProfilePage() {
             <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
               <Mail className="w-3.5 h-3.5" />
               <span>{user?.email}</span>
+            </p>
+            <p className="text-[11px] text-primary-600 dark:text-primary-400 mt-1 flex items-center gap-1 font-medium">
+              <Upload className="w-3 h-3" />
+              <span>Cloudinary media storage enabled</span>
             </p>
           </div>
         </div>
