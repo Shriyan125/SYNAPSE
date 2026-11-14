@@ -169,6 +169,35 @@ export const swaggerDocument = {
         },
       },
     },
+    '/users/avatar': {
+      post: {
+        tags: ['Users'],
+        summary: 'Upload user profile photo to Cloudinary CDN',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  avatar: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'Image file (JPEG, PNG, WEBP, GIF up to 5MB)',
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Avatar uploaded to Cloudinary and profile updated' },
+          400: { description: 'Invalid image format or missing file' },
+          401: { description: 'Unauthorized' },
+        },
+      },
+    },
     '/providers': {
       get: {
         tags: ['Providers'],

@@ -25,4 +25,16 @@ export const userController = {
       next(err);
     }
   },
+
+  /**
+   * Upload avatar to Cloudinary and update profile
+   */
+  async uploadAvatar(req, res, next) {
+    try {
+      const result = await userService.uploadAvatar(req.user.id, req.file);
+      return sendSuccess(res, result, 200, null);
+    } catch (err) {
+      next(err);
+    }
+  },
 };
